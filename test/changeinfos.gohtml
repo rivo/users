@@ -1,0 +1,5 @@
+{{ template "header" title . "Change user information" -}}
+C
+{{- if .error }}!{{ .error }}!{{ end -}}
+E{{ .infos.email }}
+{{- template "footer" . -}}

@@ -1,0 +1,16 @@
+A notification from example.com
+
+{{ template "header" . }}
+
+This email is to inform you that someone has attempted to create an account on example.com using your email address. If you did this yourself, please note that you already had an account with us. Please use https://example.com{{ .config.RouteForgottenPassword }} to recover your password. If you did not sign up for example.com yourself, you may ignore this email or get in touch with customer support at support@example.com.
+
+----------
+
+Further information about the account creation attempt:
+
+Date of account creation: {{ .date }}
+IP address: {{ .ip }}
+User agent: {{ .agent }}
+Sent to: {{ .email }}
+
+{{ template "footer" . }}

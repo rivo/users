@@ -1,0 +1,16 @@
+A notification from example.com
+
+{{ template "header" . }}
+
+This email is to inform you that someone has attempted to reset their password on example.com using your email address. If you did this yourself, please note that we do not have a user account using this email address. Please try again on https://example.com{{ .config.RouteForgottenPassword }} with a different email address. If you do not have an account on example.com, you may ignore this email or get in touch with customer support at support@example.com.
+
+----------
+
+Further information about the account creation attempt:
+
+Date of account creation: {{ .date }}
+IP address: {{ .ip }}
+User agent: {{ .agent }}
+Sent to: {{ .email }}
+
+{{ template "footer" . }}

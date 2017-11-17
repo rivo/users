@@ -1,0 +1,12 @@
+{{ template "header" title . "Verification email has been sent" -}}
+
+<h1>Please check your email</h1>
+
+<p>An email with a link to reset your password has been sent to {{ .email }}.
+Please click on that link to recover access to your user account.</p>
+
+<p>Please be sure to check your spam folder, too. If you haven't received a
+password reset email after a reasonable time, please contact support at
+support@example.com. You may attach a screenshot of this page for reference.</p>
+
+{{- template "footer" . }}

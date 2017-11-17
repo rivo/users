@@ -1,0 +1,5 @@
+{{ template "header" title . "Sign up" -}}
+S
+{{- if .error }}!{{ .error }}!{{ end -}}
+E{{ .infos.email }}
+{{- template "footer" . -}}

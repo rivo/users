@@ -1,0 +1,23 @@
+{{ template "header" title . "Change user information" -}}
+
+<h1>User information</h1>
+
+{{ if .error }}<p class="error">{{ .error }}</p>{{ end -}}
+
+<form action="{{ .config.RouteChange }}" method="post">
+  <ul>
+    <li><label for="email">Email:</label>
+      <input type="email" {{ if and .infos .infos.email }}value="{{ .infos.email }}"{{ end -}} id="email" name="email" required tabindex="10"/></li>
+    <li><label for="password">Current password:</label>
+      <input type="password" id="currentpassword" name="currentpassword" autocomplete="current-password" minlength="8" required autofocus tabindex="20"/></li>
+    <li><label for="password">New password:</label>
+      <input type="password" id="password" name="password" autocomplete="new-password" minlength="8" tabindex="30"/></li>
+    <li><label for="passwordconfirm">Confirm new password:</label>
+      <input type="password" id="passwordconfirm" name="passwordconfirm" autocomplete="new-password" minlength="8" tabindex="40" oninput="this.setCustomValidity(document.getElementById('password').value !== this.value ? 'Please enter a matching password' : '')"/></li>
+    <li><button type="submit" tabindex="50">Change information</button></li>
+  </ul>
+</form>
+
+<p>Note: Changing your email address will temporarily block access until you verify your new email address.</p>
+
+{{- template "footer" . }}

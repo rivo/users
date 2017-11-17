@@ -1,0 +1,22 @@
+Please verify your example.com account
+
+{{ template "header" . }}
+
+To complete the change of the email address of your user account at example.com, please click the following link:
+
+  https://example.com{{ .config.RouteVerify }}?id={{ .verification }}
+
+This link is valid until {{ .validity }}.
+
+If you have not changed the email address of your account on example.com, someone may have been using your email address or mistyped their own email address. You may ignore this email or get in touch with support at support@example.com.
+
+----------
+
+Further information about the account creation attempt:
+
+Date of account creation: {{ .date }}
+IP address: {{ .ip }}
+User agent: {{ .agent }}
+Sent to: {{ .email }}
+
+{{ template "footer" . }}

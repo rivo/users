@@ -1,0 +1,12 @@
+{{ template "header" title . "Verification email has been sent" -}}
+
+<h1>Please check your email</h1>
+
+<p>A verification email has been sent to {{ .email }}. Please click on the link that
+was sent with the email.</p>
+
+<p>Please be sure to check your spam folder, too. If you haven't received a
+verification email after a reasonable time, please contact support at
+support@example.com. You may attach a screenshot of this page for reference.</p>
+
+{{- template "footer" . }}

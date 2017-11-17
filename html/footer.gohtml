@@ -1,0 +1,5 @@
+{{ define "footer" -}}
+</main>
+</body>
+</html>
+{{- end }}

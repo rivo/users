@@ -1,0 +1,12 @@
+{{ template "header" title . "User information changed" -}}
+
+<h1>Your information has been changed</h1>
+
+<p>Note that if you have changed your email address, it needs to be verified
+before you can proceed. We have sent a verification link to your new email
+address. Please click on that link.</p>
+
+<p>If you haven't changed your email address, you may
+<a href="{{ .config.RouteLoggedIn }}">click here</a> to proceed.</p>
+
+{{- template "footer" . }}

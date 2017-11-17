@@ -1,0 +1,22 @@
+Password reset link for your example.com account
+
+{{ template "header" . }}
+
+To choose a new password for your user account at example.com, please click the following link:
+
+  https://example.com{{ .config.RouteResetPassword }}?token={{ .token }}
+
+This link is valid until {{ .validity }}.
+
+If you have not requested a password reset for your example.com account yourself, someone may have been using your email address or mistyped their own email address. You may ignore this email or get in touch with support at support@example.com.
+
+----------
+
+Further information about the password reset attempt:
+
+Date of account creation: {{ .date }}
+IP address: {{ .ip }}
+User agent: {{ .agent }}
+Sent to: {{ .email }}
+
+{{ template "footer" . }}
