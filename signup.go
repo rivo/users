@@ -14,7 +14,7 @@ import (
 // SignUp renders the "signup.gohtml" template upon a GET request, unless the
 // user is already logged in (which is checked using IsLoggedIn()), in which
 // case they are redirected to Config.RouteLoggedIn. On a POST request, it
-// attemps to create a new user given an email address, a password, and its
+// attempts to create a new user given an email address, a password, and its
 // confirmation. A successful sign-up will lead to a validation email to be sent
 // (using the "verification_new.tmpl" mail template for new users and the
 // "verification_existing.tmpl" mail template for existing users) and the
