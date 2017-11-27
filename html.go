@@ -82,11 +82,11 @@ func retrieveTemplate(request *http.Request, htmlTemplate string) (tmpl *templat
 		if err != nil {
 			return
 		}
-	}
 
-	// Store in cache if required.
-	if Config.CacheTemplates {
-		htmlTemplates[subdirectory+"/"+htmlTemplate] = tmpl
+		// Store in cache if required.
+		if Config.CacheTemplates {
+			htmlTemplates[subdirectory+"/"+htmlTemplate] = tmpl
+		}
 	}
 
 	return
