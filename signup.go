@@ -21,10 +21,7 @@ import (
 // "validationsent.gohtml" template to be shown.
 func SignUp(response http.ResponseWriter, request *http.Request) {
 	if request.Method == "GET" {
-		user, _, out := IsLoggedIn(response, request)
-		if out {
-			return
-		}
+		user, _, _ := IsLoggedIn(response, request)
 		if user != nil {
 			Config.Log.Printf("Sign-up page visited while logged in with %s (%s)", user.GetID(), user.GetEmail())
 			http.Redirect(response, request, Config.RouteLoggedIn, 302)

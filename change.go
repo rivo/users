@@ -23,11 +23,9 @@ import (
 // your needs.
 func Change(response http.ResponseWriter, request *http.Request) {
 	// This page only works if the user is logged in.
-	user, session, out := IsLoggedIn(response, request)
+	user, session, _ := IsLoggedIn(response, request)
 	if user == nil {
-		if !out {
-			RenderProgramError(response, request, "This page can only be accessed when you are logged in", "", nil)
-		}
+		RenderProgramError(response, request, "This page may only be accessed when you are logged in", "", nil)
 		return
 	}
 

@@ -7,7 +7,7 @@ import (
 
 func TestChangePageLoggedOut(t *testing.T) {
 	computed, _ := runRequest(nil, nil, nil, Change)
-	expected := "PEThis page can only be accessed when you are logged in"
+	expected := "PEThis page may only be accessed when you are logged in"
 	if !strings.HasPrefix(computed, expected) {
 		t.Errorf(`Expected prefix "%s" but string is "%s"`, expected, computed)
 	}

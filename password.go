@@ -21,13 +21,11 @@ import (
 // case, the "resetlinksent.gohtml" template is rendered.
 func ForgottenPassword(response http.ResponseWriter, request *http.Request) {
 	if request.Method == "GET" {
-		user, _, out := IsLoggedIn(response, request)
+		user, _, _ := IsLoggedIn(response, request)
 		if user != nil {
 			// A user is already logged in. Abort.
 			Config.Log.Printf("Forgotten password link visited while logged in with %s (%s)", user.GetID(), user.GetEmail())
-			if !out {
-				http.Redirect(response, request, Config.RouteLoggedIn, 302)
-			}
+			http.Redirect(response, request, Config.RouteLoggedIn, 302)
 			return
 		}
 

@@ -1,9 +1,7 @@
 package users
 
-/*
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"time"
 
@@ -91,9 +89,10 @@ func Example() {
 	// Add a handler for the start page.
 	http.HandleFunc(users.Config.RouteLoggedIn, func(response http.ResponseWriter, request *http.Request) {
 		// Is a user logged in?.
-		if user, _, out := users.IsLoggedIn(response, request); user != nil {
-			if out {
-				return // Some error message was already sent to the browser.
+		if user, _, _ := users.IsLoggedIn(response, request); user != nil {
+			if user == nil {
+				fmt.Fprint(response, "<body>No user is logged in</body>")
+				return
 			}
 
 			// Yes, a user is logged in.
@@ -110,8 +109,6 @@ func Example() {
 
 	// Start the server.
 	if err := users.Main(); err != nil {
-		Config.Log.Printf("Server execution failed: %s", err)
+		users.Config.Log.Printf("Server execution failed: %s", err)
 	}
 }
-
-*/

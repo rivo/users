@@ -86,33 +86,33 @@ func TestLoggedInUnverifiedUser(t *testing.T) {
 	computed, _ := runRequest(&MyUser{
 		state: StateCreated,
 	}, nil, nil, func(response http.ResponseWriter, request *http.Request) {
-		user, session, out := IsLoggedIn(response, request)
+		user, session, err := IsLoggedIn(response, request)
 		if user != nil {
 			t.Error("A user is logged in")
 		}
 		if session == nil {
 			t.Error("Did not receive a session")
 		}
-		if !out {
-			t.Error("Nothing was output")
+		if err == nil {
+			t.Error("No error was returned")
 		}
 	})
-	assertString("HOS!VI!EF", computed, t)
+	assertString("", computed, t)
 }
 
 func TestLoggedIn(t *testing.T) {
 	computed, _ := runRequest(&MyUser{
 		state: StateVerified,
 	}, nil, nil, func(response http.ResponseWriter, request *http.Request) {
-		user, session, out := IsLoggedIn(response, request)
+		user, session, err := IsLoggedIn(response, request)
 		if user == nil {
 			t.Error("No user is logged in")
 		}
 		if session == nil {
 			t.Error("Did not receive a session")
 		}
-		if out {
-			t.Error("Something was output")
+		if err != nil {
+			t.Error(err)
 		}
 	})
 	assertString("", computed, t)

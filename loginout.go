@@ -1,6 +1,7 @@
 package users
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -19,11 +20,9 @@ import (
 func LogIn(response http.ResponseWriter, request *http.Request) {
 	if request.Method == "GET" {
 		// If we're already logged in, skip ahead.
-		if user, _, out := IsLoggedIn(response, request); user != nil {
+		if user, _, _ := IsLoggedIn(response, request); user != nil {
 			Config.Log.Printf("Login page visited while logged in with %s (%s)", user.GetID(), user.GetEmail())
-			if !out {
-				http.Redirect(response, request, Config.RouteLoggedIn, 302)
-			}
+			http.Redirect(response, request, Config.RouteLoggedIn, 302)
 			return
 		}
 
@@ -90,18 +89,21 @@ func LogIn(response http.ResponseWriter, request *http.Request) {
 // IsLoggedIn checks if a user is logged in. If they are, the User object is
 // returned. If they aren't logged in, nil is returned. The session object is
 // also returned if there was one. (There is always one when a user is
-// returned.) The third return value is a flag which is set to "true" if this
-// function already sent output to the browser. (This happens when there was a
-// programm error or when the user has not yet been verified.) In that case, no
-// further output should be generated (and no user is logged in).
+// returned.)
 //
-// Callers will need to check themselves if the user's state is StateExpired, in
-// which case an according message should be displayed. In that state, users
-// should not have access to any functionality.
+// If there was an error or if the user is not in a valid state, an (English)
+// error message is returned which is clean enough to be shown to the user.
+// Because errors are automatically logged and the returned user for an error
+// is nil, it is often ok not to show the error to the user.
+//
+// Callers will need to check for themselves if the user's state is
+// StateExpired, in which case an according message should be displayed. In that
+// state, users should not have access to any functionality but instead be
+// presented with information instructing them what to do to regain access.
 //
 // This function will also send HTTP headers that instruct the browser not to
 // cache this page.
-func IsLoggedIn(response http.ResponseWriter, request *http.Request) (User, *sessions.Session, bool) {
+func IsLoggedIn(response http.ResponseWriter, request *http.Request) (User, *sessions.Session, error) {
 	// Never cache this page.
 	response.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 	response.Header().Set("Pragma", "no-cache")
@@ -110,18 +112,16 @@ func IsLoggedIn(response http.ResponseWriter, request *http.Request) (User, *ses
 	// Get the session.
 	session, err := sessions.Start(response, request, false)
 	if err != nil {
-		RenderProgramError(response, request,
-			fmt.Sprintf("Error starting session during login check on %s", request.RequestURI),
-			"Could not start user session", err)
-		return nil, nil, true
+		Config.Log.Printf(`Login check failed, could not get session on %s: %s`, request.RequestURI, err)
+		return nil, nil, errors.New("Unable to retrieve session")
 	}
 	if session == nil {
-		return nil, nil, false
+		return nil, nil, nil
 	}
 
 	// We have a session. Is a user logged in?
 	if session.User() == nil {
-		return nil, session, false
+		return nil, session, nil
 	}
 
 	// We need the correct user state.
@@ -131,14 +131,13 @@ func IsLoggedIn(response http.ResponseWriter, request *http.Request) (User, *ses
 	case StateCreated:
 		session.LogOut()
 		Config.Log.Printf(`Login check failed because account is not verified: %s (%s) on %s`, user.GetID(), user.GetEmail(), request.RequestURI)
-		RenderPageError(response, request, "signup.gohtml", "verificationincomplete", map[string]string{}, nil)
-		return nil, session, true
+		return nil, session, errors.New("Cannot access this page (verification incomplete)")
 	default:
-		RenderProgramError(response, request, fmt.Sprintf("Unknown user state %d: %s (%s)", user.GetState(), user.GetID(), user.GetEmail()), "Invalid user state", nil)
-		return nil, session, true
+		Config.Log.Printf(`Login check failed because of an unknown user state "%d": %s (%s) on %s`, user.GetState(), user.GetID(), user.GetEmail(), request.RequestURI)
+		return nil, session, errors.New("Cannot access this page (unknown user state)")
 	}
 
-	return user, session, false
+	return user, session, nil
 }
 
 // LogOut logs the user out of the current session. This does not work if it's
