@@ -30,7 +30,7 @@ go get github.com/rivo/users
 
 ## Simple Example
 
-The users.Main() function registers all handlers and starts an HTTP server:
+The `users.Main()` function registers all handlers and starts an HTTP server:
 
 ```go
 if err := users.Main(); err != nil {
@@ -59,11 +59,9 @@ If you use these handlers as they are, you will need access to an SMTP mail serv
 For pages behind the login, you can use the `users.IsLoggedIn()` function in your own handler:
 
 ```go
-user, _, out := users.IsLoggedIn(response, request)
+user, _, _ := users.IsLoggedIn(response, request)
 if user == nil {
-  if !out {
-    users.RenderProgramError(response, request, "You must be logged in", "", nil)
-  }
+  users.RenderProgramError(response, request, "You must be logged in", "", nil)
   return
 }
 fmt.Fprintf(response, "You are logged in: %s", user.GetEmail())
@@ -75,7 +73,7 @@ This package uses Golang HTML templates for the various pages and text templates
 
 The `users.User` type is an interface. Bring your own user model.
 
-The `users.Config` struct provides a number of fields with sensible defaults but which may be customized for your application. Refer to the [Godoc documentation](http://godoc.org/github.com/rivo/users) for details.
+The `users.Config` struct provides a number of fields with sensible defaults but which may be customized for your application. Refer to the [Godoc documentation](http://godoc.org/github.com/rivo/users#pkg-variables) for details.
 
 No specific database backend is assumed. The functions to load and save users default to a RAM-based solution but can be customized to access your individual database.
 
@@ -91,5 +89,7 @@ Add your issue here on GitHub. Feel free to get in touch if you have any questio
 
 ## Release Notes
 
+- v0.2 (2017-12-04)
+  - Changed signature of LoggedIn(), simpler handling
 - v0.1 (2017-11-17)
   - First release.
