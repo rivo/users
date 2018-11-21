@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/rivo/sessions"
@@ -35,7 +36,19 @@ func LogIn(response http.ResponseWriter, request *http.Request) {
 	password := request.PostFormValue("password")
 
 	// Wait a second.
+	userMutexesMutex.Lock()
+	if len(userMutexes) > 100000 {
+		userMutexes = make(map[string]*sync.Mutex)
+	}
+	mutex, ok := userMutexes[email]
+	if !ok {
+		mutex = &sync.Mutex{}
+		userMutexes[email] = mutex
+	}
+	userMutexesMutex.Unlock()
+	mutex.Lock()
 	time.Sleep(time.Second)
+	mutex.Unlock()
 
 	// Load user.
 	user, err := Config.LoadUserByEmail(email)

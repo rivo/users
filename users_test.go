@@ -6,11 +6,10 @@ import (
 	"time"
 
 	"github.com/rivo/sessions"
-	"github.com/rivo/sessions/users"
 )
 
-// MyUser implements the users.User interface.
-type MyUser struct {
+// ExampleUser implements the User interface.
+type ExampleUser struct {
 	id             string
 	email          string
 	passwordHash   []byte
@@ -21,75 +20,75 @@ type MyUser struct {
 	tokenCreated   time.Time
 }
 
-func (u *MyUser) GetID() interface{} {
+func (u *ExampleUser) GetID() interface{} {
 	return u.id
 }
 
-func (u *MyUser) SetID(id interface{}) {
+func (u *ExampleUser) SetID(id interface{}) {
 	u.id = id.(string)
 }
 
-func (u *MyUser) SetState(state int) {
+func (u *ExampleUser) SetState(state int) {
 	u.state = state
 }
 
-func (u *MyUser) GetState() int {
+func (u *ExampleUser) GetState() int {
 	return u.state
 }
 
-func (u *MyUser) SetEmail(email string) {
+func (u *ExampleUser) SetEmail(email string) {
 	u.email = email
 }
 
-func (u *MyUser) GetEmail() string {
+func (u *ExampleUser) GetEmail() string {
 	return u.email
 }
 
-func (u *MyUser) SetPasswordHash(hash []byte) {
+func (u *ExampleUser) SetPasswordHash(hash []byte) {
 	u.passwordHash = hash
 }
 
-func (u *MyUser) GetPasswordHash() []byte {
+func (u *ExampleUser) GetPasswordHash() []byte {
 	return u.passwordHash
 }
 
-func (u *MyUser) SetVerificationID(id string, created time.Time) {
+func (u *ExampleUser) SetVerificationID(id string, created time.Time) {
 	u.verificationID = id
 	u.vidCreated = created
 }
 
-func (u *MyUser) GetVerificationID() (string, time.Time) {
+func (u *ExampleUser) GetVerificationID() (string, time.Time) {
 	return u.verificationID, u.vidCreated
 }
 
-func (u *MyUser) SetPasswordToken(id string, created time.Time) {
+func (u *ExampleUser) SetPasswordToken(id string, created time.Time) {
 	u.passwordToken = id
 	u.tokenCreated = created
 }
 
-func (u *MyUser) GetPasswordToken() (string, time.Time) {
+func (u *ExampleUser) GetPasswordToken() (string, time.Time) {
 	return u.passwordToken, u.tokenCreated
 }
 
-func (u *MyUser) GetRoles() []string {
+func (u *ExampleUser) GetRoles() []string {
 	return nil
 }
 
 func Example() {
 	//  We need a way to create new users.
-	users.Config.NewUser = func() users.User {
-		return &MyUser{
+	Config.NewUser = func() User {
+		return &ExampleUser{
 			id: sessions.CUID(),
 		}
 	}
 
 	// Set a starting point for when users have just logged in.
-	users.Config.RouteLoggedIn = "/start"
+	Config.RouteLoggedIn = "/start"
 
 	// Add a handler for the start page.
-	http.HandleFunc(users.Config.RouteLoggedIn, func(response http.ResponseWriter, request *http.Request) {
+	http.HandleFunc(Config.RouteLoggedIn, func(response http.ResponseWriter, request *http.Request) {
 		// Is a user logged in?.
-		if user, _, _ := users.IsLoggedIn(response, request); user != nil {
+		if user, _, _ := IsLoggedIn(response, request); user != nil {
 			if user == nil {
 				fmt.Fprint(response, "<body>No user is logged in</body>")
 				return
@@ -97,10 +96,10 @@ func Example() {
 
 			// Yes, a user is logged in.
 			fmt.Fprintf(response, "<body>User %s (%s) is logged in", user.GetID(), user.GetEmail())
-			if user.GetState() == users.StateExpired {
+			if user.GetState() == StateExpired {
 				fmt.Fprint(response, ", but expired")
 			}
-			fmt.Fprintf(response, ` <form action="%s" method="POST"><button>Log out</button></form></body>`, users.Config.RouteLogOut)
+			fmt.Fprintf(response, ` <form action="%s" method="POST"><button>Log out</button></form></body>`, Config.RouteLogOut)
 			return
 		}
 
@@ -108,7 +107,7 @@ func Example() {
 	})
 
 	// Start the server.
-	if err := users.Main(); err != nil {
-		users.Config.Log.Printf("Server execution failed: %s", err)
+	if err := Main(); err != nil {
+		Config.Log.Printf("Server execution failed: %s", err)
 	}
 }

@@ -8,10 +8,17 @@ import (
 	"github.com/rivo/sessions"
 )
 
+// The users in our system.
 var (
-	// The users in our system.
 	users      []User
 	usersMutex sync.RWMutex
+)
+
+// Variables that help pausing access to some functions.
+var (
+	userMutexes      = make(map[string]*sync.Mutex) // Maps user email addresses to mutexes.
+	userMutexesMutex sync.Mutex                     // Mutex for the userMutexes map.
+	pauseMutex       sync.Mutex                     // Single mutex for global pauses.
 )
 
 // Initialize this package.
