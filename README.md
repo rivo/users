@@ -81,7 +81,7 @@ No specific database backend is assumed. The functions to load and save users de
 
 See http://godoc.org/github.com/rivo/users for the documentation.
 
-See also the [https://github.com/rivo/users/wiki](Wiki) for more examples and explanations.
+See also the https://github.com/rivo/users/wiki for more examples and explanations.
 
 ## Your Feedback
 
