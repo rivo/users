@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
-	"sync"
-	"time"
 
 	"github.com/rivo/sessions"
 	"golang.org/x/crypto/bcrypt"
@@ -35,20 +33,10 @@ func LogIn(response http.ResponseWriter, request *http.Request) {
 	email := strings.ToLower(request.PostFormValue("email"))
 	password := request.PostFormValue("password")
 
-	// Wait a second.
-	userMutexesMutex.Lock()
-	if len(userMutexes) > 100000 {
-		userMutexes = make(map[string]*sync.Mutex)
+	// Throttle attempts.
+	if Config.ThrottleLogin != nil {
+		Config.ThrottleLogin(email)
 	}
-	mutex, ok := userMutexes[email]
-	if !ok {
-		mutex = &sync.Mutex{}
-		userMutexes[email] = mutex
-	}
-	userMutexesMutex.Unlock()
-	mutex.Lock()
-	time.Sleep(time.Second)
-	mutex.Unlock()
 
 	// Load user.
 	user, err := Config.LoadUserByEmail(email)

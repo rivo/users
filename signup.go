@@ -140,9 +140,9 @@ func SignUp(response http.ResponseWriter, request *http.Request) {
 // Verify processes a verification link by checking the provided verification ID
 // and, if valid, setting the user's state to "verified".
 func Verify(response http.ResponseWriter, request *http.Request) {
-	pauseMutex.Lock()
-	time.Sleep(time.Second)
-	pauseMutex.Unlock()
+	if Config.ThrottleVerification != nil {
+		Config.ThrottleVerification()
+	}
 
 	// Find the user for this verification ID.
 	verificationID := request.FormValue("id")

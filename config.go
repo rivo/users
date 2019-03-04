@@ -3,6 +3,8 @@ package users
 import (
 	"log"
 	"os"
+	"sync"
+	"time"
 )
 
 // Config contains all the settings and helper functions needed to run this
@@ -98,6 +100,14 @@ var Config = struct {
 	// LoggedIn is called when a user was successfully logged in from a browser
 	// at the given IP address.
 	LoggedIn func(user User, ipAddress string)
+
+	// ThrottleVerification throttles verification attempts. The default
+	// implementation simply pauses all verification requests by one second.
+	ThrottleVerification func()
+
+	// ThrottleLogin throttles login attempts. The default implementation pauses
+	// each login request by the same user for one second.
+	ThrottleLogin func(email string)
 }{
 	ServerAddr:             ":5050",
 	Log:                    log.New(os.Stdout, "", log.LstdFlags),
@@ -181,4 +191,24 @@ var Config = struct {
 		return nil, nil
 	},
 	LoggedIn: nil,
+	ThrottleVerification: func() {
+		pauseMutex.Lock()
+		time.Sleep(time.Second)
+		pauseMutex.Unlock()
+	},
+	ThrottleLogin: func(email string) {
+		userMutexesMutex.Lock()
+		if len(userMutexes) >= 1000 {
+			userMutexes = make(map[string]*sync.Mutex)
+		}
+		mutex, ok := userMutexes[email]
+		if !ok {
+			mutex = &sync.Mutex{}
+			userMutexes[email] = mutex
+		}
+		userMutexesMutex.Unlock()
+		mutex.Lock()
+		time.Sleep(time.Second)
+		mutex.Unlock()
+	},
 }
