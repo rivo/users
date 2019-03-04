@@ -134,7 +134,7 @@ func SignUp(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	RenderPage(response, request, "verificationsent.gohtml", map[string]interface{}{"email": email})
+	RenderPage(response, request, "verificationsent.gohtml", map[string]interface{}{"config": Config, "email": email})
 }
 
 // Verify processes a verification link by checking the provided verification ID
