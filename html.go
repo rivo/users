@@ -15,11 +15,21 @@ import (
 	"github.com/rivo/sessions"
 )
 
+//Template data provider callback function signature
+type tmplDataProvider func(*http.Request) map[string]interface{}
+
 var (
 	// The list of htmlTemplates that have already been parsed.
 	htmlTemplates      map[string]*template.Template
 	htmlTemplatesMutex sync.Mutex
+	renderPageDataCb   tmplDataProvider
 )
+
+//SetRenderPageDataCb sets the callback handler that is invoked when RenderPage is executed
+//The provided map is accessible within a template though a key called "extdata".
+func SetRenderPageDataCb(f tmplDataProvider) {
+	renderPageDataCb = f
+}
 
 // retrieveTemplate returns an HTML template with the given filename (located in
 // Config.HTMLTemplateDir or a subdirectory of it, depending on the value of
@@ -123,6 +133,14 @@ func RenderPage(response http.ResponseWriter, request *http.Request, htmlTemplat
 	response.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 	response.Header().Set("Pragma", "no-cache")
 	response.Header().Set("Expires", "0")
+
+	dataMap, ok := data.(map[string]interface{})
+	// Inject extended template data provided by a callback function
+	if ok && renderPageDataCb != nil {
+		dataMap["extdata"] = renderPageDataCb(request)
+		data = dataMap
+	}
+
 	if err := tmpl.Execute(response, data); err != nil {
 		programError(response, fmt.Sprintf(`Template "%s" could not be executed`, htmlTemplate), "Could not execute template", err)
 	}
