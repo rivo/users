@@ -80,7 +80,7 @@ func SendMail(request *http.Request, email, mailTemplate string, data interface{
 	err = smtp.SendMail(
 		fmt.Sprintf("%s:%d", Config.SMTPHostname, Config.SMTPPort),
 		auth,
-		fmt.Sprintf("%s <%s>", Config.SenderName, Config.SenderEmail),
+		Config.SenderEmail,
 		[]string{email},
 		body,
 	)
