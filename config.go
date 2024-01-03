@@ -14,6 +14,9 @@ var Config = struct {
 	// The address the HTTP server binds to.
 	ServerAddr string
 
+	// The root of the URL.
+	URLRoot string
+
 	// The logger to which messages produced in this package are sent.
 	Log *log.Logger
 
@@ -110,6 +113,7 @@ var Config = struct {
 	ThrottleLogin func(email string)
 }{
 	ServerAddr:             ":5050",
+	URLRoot:                "http://localhost",
 	Log:                    log.New(os.Stdout, "", log.LstdFlags),
 	PasswordNames:          []string{"example.com", "ExampleCom", "Example"},
 	RouteSignUp:            "/signup",
